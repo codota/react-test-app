@@ -1,10 +1,14 @@
 const express = require('express');
 const os = require('os');
+const bodyParser = require('body-parser');
 
 const app = express();
-let balance = 10;
 app.use(express.static('dist'));
+app.use(bodyParser.json());
+
 app.get('/api/getUsername', (req, res) => res.send({ username: os.userInfo().username }));
+
+let balance = 10;
 app.get('/api/wallet', (req, res) => res.send({ balance }));
 app.post('/api/wallet', function(req, res, next) {
     switch (req.body.action) {
@@ -15,7 +19,7 @@ app.post('/api/wallet', function(req, res, next) {
             balance -= req.body.amount;
             break;
     }
-    res.send(balance);
+    res.json({balance});
   });
 
 
