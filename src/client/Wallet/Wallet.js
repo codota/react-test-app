@@ -5,7 +5,7 @@ export default class Wallet extends React.Component {
 
   componentDidMount() {
     // this.setState({ balance:10 });
-    fetch('/api/wallet/').then(response => response.json()).then(balance => this.setState({ balance }));
+    fetch('/api/wallet/').then(response => response.json()).then(({balance}) => this.setState({ balance }));
     
   }
   render() {
