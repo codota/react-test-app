@@ -3,27 +3,31 @@ import './wallet.css';
 import autobind from "autobind-decorator";
 
 export default class Wallet extends React.Component {
-    state = {balance: null, amount: ''};
+    state = {balance: 0, amount: '', walletId: null, walletIdText: ''};
 
-    async componentDidMount() {
-        await this.refreshBalance();
-    }
-
-    refreshBalance() {
-        return fetch('/api/wallet/').then(response => response.json()).then(({balance}) => this.setState({balance}));
+    async refreshBalance() {
+        if (!this.state.walletId) {
+            this.setState({balance: 0});
+        } else {
+            await fetch('/api/wallet/' + this.state.walletId).then(response => response.json()).then(({balance}) => this.setState({balance}));
+        }
     }
 
     render() {
         return (
             <div className='wallet'>
                 <label>
-                    Wallet ID:
+                    <span id="wallet-id-label">Wallet ID:</span>
                     <input
                         type='number'
                         className='wallet-id'
                         name='wallet-id'
                         id='wallet-id'
+                        value={this.state.walletIdText}
+                        onChange={this.walletIdChanged}
                     />
+
+                    <button id="set-wallet-id" onClick={this.setWalletId}>Set</button>
                 </label>
 
                 <label>
@@ -34,7 +38,7 @@ export default class Wallet extends React.Component {
                 </label>
 
                 <div className='wallet-action'>
-                    <button disabled={!this.amountValid()} className='wallet-deposit btn btn-primary'
+                    <button disabled={!this.state.walletId || !this.amountValid()} className='wallet-deposit btn btn-primary'
                             onClick={this.deposit}>Deposit
                     </button>
 
@@ -45,9 +49,10 @@ export default class Wallet extends React.Component {
                         id='wallet-amount'
                         value={this.state.amount}
                         onChange={this.walletAmountChanged}
+                        disabled={!this.state.walletId}
                     />
 
-                    <button disabled={!this.amountValid()} className='wallet-withdraw btn btn-primary'
+                    <button disabled={!this.state.walletId || !this.amountValid()} className='wallet-withdraw btn btn-primary'
                             onClick={this.withdraw}>Withdraw
                     </button>
                 </div>
@@ -70,9 +75,9 @@ export default class Wallet extends React.Component {
     }
 
     postAmount(action) {
-        if (this.amountValid()) {
+        if (this.amountValid() && this.state.walletId) {
             let amount = parseInt(this.state.amount);
-            fetch('/api/wallet', {
+            fetch('/api/wallet/' + this.state.walletId, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'
@@ -94,5 +99,17 @@ export default class Wallet extends React.Component {
     @autobind
     withdraw() {
         this.postAmount('withdraw');
+    }
+
+    @autobind
+    walletIdChanged(e) {
+        this.setState({walletIdText: e.target.value});
+    }
+
+    @autobind
+    async setWalletId() {
+       this.setState({walletId: this.state.walletIdText}, async () => {
+           await this.refreshBalance()
+       });
     }
 }

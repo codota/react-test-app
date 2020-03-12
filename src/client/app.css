@@ -18,5 +18,25 @@ body {
 }
 
 .wallet label {
+  width: 500px;
   margin: 10px 0 10px;
+}
+
+#wallet-id {
+  width: 150px;
+  margin-left: 10px;
+}
+
+#set-wallet-id {
+  width: 80px;
+  margin-left: 10px;
+}
+
+#wallet-amount {
+  width: 150px;
+}
+
+#wallet-id-label {
+  display: inline-block;
+  width: 80px
 }
