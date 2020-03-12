@@ -6,3 +6,17 @@ body {
   text-align: center;
   margin: auto;
 }
+
+.wallet-withdraw {
+  margin-left: 10px;
+  width: 80px;
+}
+
+.wallet-deposit {
+  margin-right: 10px;
+  width: 80px;
+}
+
+.wallet label {
+  margin: 10px 0 10px;
+}
